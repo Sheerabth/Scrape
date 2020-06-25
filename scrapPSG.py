@@ -4,10 +4,10 @@ import re
 import datetime
 import json
 
-begin_time = datetime.datetime.now()
-
 rollNo = input('Enter your roll number: ')
 pwd = input('Enter your password: ')
+
+begin_time = datetime.datetime.now()
 
 loginurl = 'https://ecampus.psgtech.ac.in/studzone2/'
 client = requests.session()
