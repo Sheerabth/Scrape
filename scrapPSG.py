@@ -33,9 +33,23 @@ formData = {
 
 homeResponse = client.post(homeurl, data=formData)
 homeSoup = BeautifulSoup(homeResponse._content, 'html.parser')
-print('Welcome', homeSoup.find(id="Title1_LblStaffName").string)
-links = homeSoup.find_all('td')
 
+try:
+    print('Welcome', homeSoup.find(id="Title1_LblStaffName").string)
+except AttributeError:
+    scriptList = list(homeSoup.find_all('script'))
+    if scriptList[0].string.strip() == "alert( ' Invalid Password' )":
+        print("Invalid Password")
+    elif scriptList[len(scriptList) - 1].string.strip() == "alert('Invalid Login Id')":
+        print("Invalid Login Id")
+    else:
+        print('Some other other error')
+    exit()
+except Error:
+    print(Error)
+    exit()
+
+links = homeSoup.find_all('td')
 impLinks = dict()
 for link in links:
     if link.get('onclick') is None:
