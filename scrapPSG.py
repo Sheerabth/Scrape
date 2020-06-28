@@ -15,7 +15,7 @@ loginurl = 'https://ecampus.psgtech.ac.in/studzone2/'
 client = requests.session()
 loginResponse = client.get(loginurl)
 
-loginSoup = BeautifulSoup(loginResponse._content, 'html.parser')
+loginSoup = BeautifulSoup(loginResponse.text, 'html.parser')
 
 viewState = loginSoup.find(id="__VIEWSTATE")['value']
 eventValidation = loginSoup.find(id="__EVENTVALIDATION")['value']
@@ -32,7 +32,7 @@ formData = {
 }
 
 homeResponse = client.post(homeurl, data=formData)
-homeSoup = BeautifulSoup(homeResponse._content, 'html.parser')
+homeSoup = BeautifulSoup(homeResponse.text, 'html.parser')
 
 try:
     print('Welcome', homeSoup.find(id="Title1_LblStaffName").string)
@@ -73,7 +73,7 @@ for link in links:
 # CA Marks
 CAurl = loginurl + impLinks['CA Marks']
 CAResponse = client.get(CAurl)
-CASoup = BeautifulSoup(CAResponse._content, 'html.parser')
+CASoup = BeautifulSoup(CAResponse.text, 'html.parser')
 
 infoTable = CASoup.find(id='TbStudInfo')
 studInfo = dict()
@@ -127,7 +127,7 @@ for i in range(len(markTables)):
 # Student Attendance
 atturl = loginurl + impLinks['Student Attendance']
 attResponse = client.get(atturl)
-attSoup = BeautifulSoup(attResponse._content, 'html.parser')
+attSoup = BeautifulSoup(attResponse.text, 'html.parser')
 
 studAtt = list()
 rowHead = list()
@@ -163,23 +163,24 @@ try:
 except Error as error:
     print("Error while connecting to MySQL", error)
 
-querry = """CREATE TABLE IF NOT EXISTS studData (
-                    rollNo VARCHAR(6) PRIMARY KEY UNIQUE,
-                    pwd VARCHAR(16),
-                    userName VARCHAR(32),
-                    Programme VARCHAR(32),
-                    semNo INT,
-                    CAMain TEXT,
-                    Attendance TEXT
+querry = """CREATE TABLE IF NOT EXISTS STUDENT_DATA (
+                    ROLL_NUMBER VARCHAR(8) PRIMARY KEY UNIQUE,
+                    PASSWORD VARCHAR(30) NOT NULL ,
+                    STUDENT_NAME VARCHAR(40),
+                    PROGRAMME VARCHAR(32),
+                    SEMESTER INT,
+                    CA_MAIN TEXT,
+                    ATTENDANCE TEXT
                     )"""
 cursor.execute(querry)
 
-querry = """INSERT INTO studData (rollNo, pwd, userName, Programme, semNo, CAMain, Attendance)
+querry = """INSERT INTO STUDENT_DATA (ROLL_NUMBER, PASSWORD, STUDENT_NAME, PROGRAMME, SEMESTER, CA_MAIN, ATTENDANCE)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     ON DUPLICATE KEY UPDATE
-                    semNo = %s,
-                    CAMain = %s,
-                    Attendance = %s"""
+                    SEMESTER = %s,
+                    CA_MAIN = %s,
+                    ATTENDANCE = %s"""
+
 data = (rollNo, pwd, studInfo['Name'], studInfo['Programme/Br.'],
         studInfo['Sem No'], str(studMarks), str(studAtt),
         studInfo['Sem No'], str(studMarks), str(studAtt))
