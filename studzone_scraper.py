@@ -99,7 +99,8 @@ class StudzoneScraper:
             print(stud_info)
 
             # TODO: Redo / Increase efficiency and understanability
-            mark_tables = BeautifulSoup(str(list(info_table.next_siblings)[1]), 'html.parser').findAll('table')
+            mark_tables = BeautifulSoup(str(list(info_table.next_siblings)), 'html.parser').findAll('table')
+            mark_tables.pop()
 
             stud_marks = list()
             for i in range(len(mark_tables)):
